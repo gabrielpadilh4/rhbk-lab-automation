@@ -17,8 +17,8 @@ The lab consists of 4 dedicated RHEL servers configured in a highly available, l
 | :--- | :--- | :--- | :--- | :--- |
 | `control-node` | `192.168.122.1` | - | Ansible Execution Environment Node | - |
 | `httpd.lab.local` | `192.168.122.10` | RHEL 10 | Reverse Proxy / Load Balancer (Apache HTTPD) | 443 |
-| `keycloak01.lab.local` | `192.168.122.11` | RHEL 10 | RHBK Active Node 1 | 8443, 7800 |
-| `keycloak02.lab.local` | `192.168.122.12` | RHEL 10 | RHBK Active Node 2 | 8443, 7800 |
+| `keycloak01.lab.local` | `192.168.122.11` | RHEL 10 | RHBK Active Node 1 | 8080, 7800, 9000 |
+| `keycloak02.lab.local` | `192.168.122.12` | RHEL 10 | RHBK Active Node 2 | 8080, 7800, 9000 |
 | `keycloak-postgresql-db.lab.local` | `192.168.122.13` | RHEL 10 | Database Backend (PostgreSQL) | 5432 |
 
 ## Prerequisites
@@ -108,11 +108,11 @@ If using SSH keys instead of passwords, configure them in the inventory or `~/.s
 
 Before execution, verify all the following are complete:
 
-- ✅ `inventory` file updated with correct hostnames and IP addresses
-- ✅ `devops_become_password` file created and set with appropriate permissions
-- ✅ `keycloak-vault-pass` file created
-- ✅ `group_vars/keycloak/main.yaml`, `group_vars/database/main.yaml`, and `group_vars/load_balancer/main.yaml` customized for your environment
-- ✅ SSH connectivity verified with `ansible all -i inventory -m ping`
+- [ ]`inventory` file updated with correct hostnames and IP addresses
+- [ ]`devops_become_password` file created and set with appropriate permissions
+- [ ]`keycloak-vault-pass` file created
+- [ ]`group_vars/keycloak/main.yaml`, `group_vars/database/main.yaml`, and `group_vars/load_balancer/main.yaml` customized for your environment
+- [ ]SSH connectivity verified with `ansible all -i inventory -m ping`
 
 ### Execution
 
