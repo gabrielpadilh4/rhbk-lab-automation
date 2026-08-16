@@ -1,0 +1,71 @@
+---
+- name: Install and Configure HTTPD
+  hosts: load_balancer
+  tasks:
+    - name: Install httpd package
+      ansible.builtin.dnf:
+        name: "{{ packages }}"
+        state: present
+
+    - name: Try restarting httpd
+      block:
+        - name: Start and Enable HTTPD service
+          ansible.builtin.systemd_service:
+            name: "{{ service }}"
+            state: started
+            enabled: true
+      rescue:
+        - name: Print failed message
+          ansible.builtin.debug:
+            msg: Failed to start "{{ service }}" service!
+
+    - name: Remove default ssl configuration
+      ansible.builtin.file:
+        path: /etc/httpd/conf.d/ssl.conf
+        state: absent
+
+    - name: Allow httpd_can_network_connect in Selinux
+      redhat.rhel_system_roles.seboolean:
+        name: httpd_can_network_connect
+        state: true
+        persistent: true
+
+    - name: Allow httpd in firewall
+      ansible.posix.firewalld:
+        service: "{{ item }}"
+        state: enabled
+        immediate: true
+        permanent: true
+      loop: "{{ firewall_services }}"
+
+    - name: Create certificates directory
+      ansible.builtin.file:
+        path: "{{ certificates_dir }}"
+        state: directory
+        mode: "0755"
+
+    - name: Copy ssl certificates
+      ansible.builtin.copy:
+        src: "/workspaces/rhbk-lab-automation/files/{{ item }}"
+        dest: "{{ certificates_dir }}/{{ item }}"
+        mode: "0644"
+      loop: "{{ certificates_files }}"
+
+    - name: Gather facts from Keycloak servers
+      ansible.builtin.setup:
+      delegate_to: "{{ item }}"
+      delegate_facts: true
+      loop: "{{ groups['keycloak'] }}"
+
+    - name: Copy http-keycloak configuration
+      ansible.builtin.template:
+        src: /workspaces/rhbk-lab-automation/templates/httpd-keycloak.conf.j2
+        dest: "{{ httpd_conf_file }}"
+        mode: '0644'
+      notify: Restart httpd
+
+  handlers:
+    - name: Restart httpd
+      ansible.builtin.systemd_service:
+        name: httpd
+        state: restarted

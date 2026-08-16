@@ -1,0 +1,37 @@
+# {{ ansible_managed }}
+
+Listen 443
+
+<Proxy balancer://keycloak_cluster>
+
+   {% for keycloak in groups['keycloak'] %}
+    BalancerMember http://{{ hostvars[keycloak]['ansible_default_ipv4']['address'] }}:8080 route={{ hostvars[keycloak]['inventory_hostname'] }}
+   {% endfor %}
+
+</Proxy>
+
+
+<VirtualHost *:443>
+    ServerName keycloak.lab.local
+
+    SSLEngine on
+    SSLCertificateFile /opt/certificates/keycloak.lab.local.crt
+    SSLCertificateKeyFile /opt/certificates/keycloak.lab.local.key
+
+    ProxyPreserveHost on
+    ProxyAddHeaders on
+
+    RequestHeader set X-Forwarded-Proto "https"
+    RequestHeader set X-Forwarded-Port "443"
+
+    ProxyPass / "balancer://keycloak_cluster/"
+    ProxyPassReverse / "balancer://keycloak_cluster/"
+
+    ErrorLog /var/log/httpd/keycloak-proxy_error.log
+    CustomLog /var/log/httpd/keycloak-proxy_access.log combined
+</VirtualHost>
+
+<VirtualHost *:80>
+    ServerName keycloak.lab.local
+    Redirect permanent / https://keycloak.lab.local/
+</VirtualHost>

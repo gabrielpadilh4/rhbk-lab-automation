@@ -1,0 +1,11 @@
+- name: Import pre-setup playbook
+  ansible.builtin.import_playbook: playbooks/pre-setup.yaml
+
+- name: Import postgresql playbook
+  ansible.builtin.import_playbook: playbooks/postgresql.yaml
+
+- name: Import RHBK playbook
+  ansible.builtin.import_playbook: playbooks/rhbk.yaml
+
+- name: Import HTTPD playbook
+  ansible.builtin.import_playbook: playbooks/httpd.yaml

@@ -1,0 +1,9 @@
+---
+postgresql:
+  data_directory: /var/lib/pgsql/data
+  packages:
+    - postgresql18-server
+    - python3-psycopg2
+  systemd_service: postgresql
+  firewall_port: 5432
+  init_command: "postgresql-setup --initdb"

@@ -1,0 +1,76 @@
+- name: Install and Configure PostgreSQL
+  hosts: database
+  tasks:
+    - name: Install PostgreSQL packages
+      ansible.builtin.dnf:
+        name: "{{ postgresql['packages'] }}"
+        state: present
+
+    - name: Initialize postgresql configuration
+      ansible.builtin.command:
+        cmd: "{{ postgresql['init_command'] }}"
+        creates: "{{ postgresql['data_directory'] }}"
+      register: postgresql_init
+
+    - name: Start and Enable the PostgreSQL service
+      ansible.builtin.systemd_service:
+        name: "{{ postgresql['systemd_service'] }}"
+        state: started
+        enabled: true
+
+    - name: Allow PostgreSQL in Firewall
+      ansible.posix.firewalld:
+        port: "{{ postgresql['firewall_port'] }}/tcp"
+        state: enabled
+        permanent: true
+        immediate: true
+
+    - name: Create the "keycloak-db" in postgresql
+      community.postgresql.postgresql_db:
+        name: "{{ db_name }}"
+        state: present
+      become: true
+      become_user: postgres
+
+    - name: Configure Postgresql for Keycloak connection
+      notify: Restart postgres
+      block:
+        - name: Create postgresql user for Keycloak
+          community.postgresql.postgresql_user:
+            db: "{{ db_name }}"
+            name: "{{ db_user }}"
+            password: "{{ db_password }}"
+            state: present
+          become: true
+          become_user: postgres
+          no_log: true
+
+        - name: Grant all privileges to Keycloak user
+          community.postgresql.postgresql_privs:
+            db: "{{ db_name }}"
+            objs: public
+            privs: ALL
+            type: schema
+            role: "{{ db_user }}"
+          become: true
+          become_user: postgres
+
+        - name: Allow postgresql to listen in the network
+          ansible.builtin.lineinfile:
+            path: "{{ postgresql['data_directory'] }}/postgresql.conf"
+            regexp: "^#listen_addresses"
+            line: "listen_addresses = '*'"
+
+        - name: Allow access from network
+          community.postgresql.postgresql_pg_hba:
+            dest: "{{ postgresql['data_directory'] }}/pg_hba.conf"
+            contype: host
+            users: keycloak
+            source: 192.168.122.0/24
+            databases: all
+
+  handlers:
+    - name: Restart postgres
+      ansible.builtin.systemd_service:
+        name: "{{ postgresql['systemd_service'] }}"
+        state: restarted

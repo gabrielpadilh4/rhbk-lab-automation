@@ -1,0 +1,9 @@
+---
+collections:
+  - name: redhat.rhel_system_roles
+    version: 1.120.5
+
+  - name: redhat.rhbk
+    version: 3.0.2
+
+  - name: community.postgresql

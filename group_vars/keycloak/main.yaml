@@ -1,0 +1,19 @@
+rhbk_version: 26.6.5
+rhbk_offline_install: true
+rhbk_download_path: "/workspaces/rhbk-lab-automation"
+rhbk_dest: /opt/rhbk
+rhbk_systemd_wait_for_port_number: 8080
+
+rhbk_proxy_headers: xforwarded
+rhbk_hostname: "https://keycloak.lab.local"
+rhbk_hostname_strict: false
+
+rhbk_log: file,console
+
+rhbk_ha_enabled: true
+rhbk_health_check_url: http://localhost:9000/health
+rhbk_db_user: "{{ db_user }}"
+rhbk_db_pass: "{{ db_password }}"
+rhbk_db_url: "jdbc:postgresql://keycloak-postgresql-db.lab.local:5432/keycloak"
+
+rhbk_bootstrap_admin_password: "{{ admin_password }}"

@@ -1,0 +1,15 @@
+- name: Install and Configure Red Hat build of Keycloak
+  hosts: keycloak
+  pre_tasks:
+    - name: Allow RHBK ports in Firewall
+      ansible.posix.firewalld:
+        port: "{{ item }}"
+        state: enabled
+        permanent: true
+        immediate: true
+      loop:
+        - 8080/tcp
+        - 9000/tcp
+        - 7800/tcp
+  roles:
+    - redhat.rhbk.rhbk

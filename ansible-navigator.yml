@@ -1,0 +1,15 @@
+---
+ansible-navigator:
+  ansible:
+    config:
+      path: ./ansible.cfg
+  execution-environment:
+    enabled: true
+    container-engine: "podman"
+    image: "registry.redhat.io/ansible-automation-platform-25/ansible-dev-tools-rhel8:latest"
+    pull:
+      policy: "missing"
+  mode: stdout
+  time-zone: local
+  playbook-artifact:
+    enable: false

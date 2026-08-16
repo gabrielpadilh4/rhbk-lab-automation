@@ -1,0 +1,17 @@
+---
+packages:
+  - httpd
+  - mod_ssl
+
+service: httpd
+
+firewall_services:
+  - http
+  - https
+
+certificates_dir: /opt/certificates
+certificates_files:
+  - keycloak.lab.local.crt
+  - keycloak.lab.local.key
+
+httpd_conf_file: /etc/httpd/conf.d/http-keycloak.conf
