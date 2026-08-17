@@ -152,7 +152,7 @@ ansible-navigator run playbook.yaml -i inventory -vvv
 Use systemd to check service status:
 
 ```bash
-ansible keycloak -i inventory -m systemd -a "name=keycloak state=started"
+ansible keycloak -i inventory -m systemd -a "name=rhbk state=started"
 ansible database -i inventory -m systemd -a "name=postgresql state=started"
 ansible load_balancer -i inventory -m systemd -a "name=httpd state=started"
 ```
