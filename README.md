@@ -108,11 +108,15 @@ If using SSH keys instead of passwords, configure them in the inventory or `~/.s
 
 Before execution, verify all the following are complete:
 
-- [ ]`inventory` file updated with correct hostnames and IP addresses
-- [ ]`devops_become_password` file created and set with appropriate permissions
-- [ ]`keycloak-vault-pass` file created
-- [ ]`group_vars/keycloak/main.yaml`, `group_vars/database/main.yaml`, and `group_vars/load_balancer/main.yaml` customized for your environment
-- [ ]SSH connectivity verified with `ansible all -i inventory -m ping`
+- [ ] `inventory` file updated with correct hostnames and IP addresses
+- [ ] `devops_become_password` file created and set with appropriate permissions
+- [ ] `keycloak-vault-pass` file created
+- [ ] `group_vars/keycloak/main.yaml`, `group_vars/database/main.yaml`, and `group_vars/load_balancer/main.yaml` customized for your environment
+- [ ] Certificates `keycloak.lab.local.crt` and `keycloak.lab.local.key` in files match the host
+```
+openssl req -x509 -newkey rsa:4096 -sha256 -days 365 -noenc -keyout keycloak.lab.local.key -out keycloak.lab.local.crt -subj "/C=US/ST=State/L=City/O=Organization/OU=Department/CN=keycloak.lab.local" -addext "subjectAltName=DNS:keycloak.lab.local,IP:192.168.122.10"
+```
+- [ ] SSH connectivity verified with `ansible all -i inventory -m ping`
 
 ### Execution
 
