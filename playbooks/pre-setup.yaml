@@ -1,6 +1,11 @@
 - name: Pre-configure the environment
   hosts: all
   tasks:
+    - name: Configure hostname of managed hosts
+      ansible.builtin.hostname:
+        name: "{{ inventory_hostname }}"
+        use: systemd
+
     - name: Update all packages
       ansible.builtin.dnf:
         name: "*"

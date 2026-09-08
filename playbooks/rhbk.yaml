@@ -13,3 +13,8 @@
         - 7800/tcp
   roles:
     - redhat.rhbk.rhbk
+  tasks:
+    - name: Install krb5-workstation packages
+      ansible.builtin.dnf:
+        name: "{{ packages }}"
+        state: present
