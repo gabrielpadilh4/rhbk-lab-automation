@@ -16,5 +16,5 @@
   tasks:
     - name: Install krb5-workstation packages
       ansible.builtin.dnf:
-        name: "{{ packages }}"
+        name: "krb5-workstation"
         state: present

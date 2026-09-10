@@ -1,15 +1,28 @@
 - name: Pre-configure the environment
   hosts: all
+  roles:
+    - redhat.rhel_system_roles.network
   tasks:
     - name: Configure hostname of managed hosts
       ansible.builtin.hostname:
         name: "{{ inventory_hostname }}"
         use: systemd
 
+    - name: Configure devops user
+      ansible.builtin.user:
+        name: devops
+        password: "{{ 'devops' | password_hash('sha512', 65534 | random(seed=inventory_hostname) | string) }}"
+        state: present
+
     - name: Update all packages
       ansible.builtin.dnf:
         name: "*"
         state: latest
+      register: package_upgraded
+
+    - name: Reboot remote hosts
+      ansible.builtin.reboot:
+      when: package_upgraded.changed
 
     - name: Configure "sudo" for devops user
       ansible.builtin.lineinfile:

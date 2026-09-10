@@ -9,8 +9,9 @@
     - name: Initialize postgresql configuration
       ansible.builtin.command:
         cmd: "{{ postgresql['init_command'] }}"
-        creates: "{{ postgresql['data_directory'] }}"
-      register: postgresql_init
+        creates: "{{ postgresql['data_directory'] }}/pg_hba.conf"
+      become: true
+      become_user: root
 
     - name: Start and Enable the PostgreSQL service
       ansible.builtin.systemd_service:

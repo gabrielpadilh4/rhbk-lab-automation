@@ -2,9 +2,10 @@
 - name: Install and Configure HTTPD
   hosts: load_balancer
   tasks:
+
     - name: Install httpd package
       ansible.builtin.dnf:
-        name: "{{ packages }}"
+        name: "{{ httpd_packages }}"
         state: present
 
     - name: Try restarting httpd

@@ -3,3 +3,4 @@ collections/ansible_collections
 rhbk-26.6.5.zip
 keycloak-vault-pass
 devops_become_password
+.temp-inventory

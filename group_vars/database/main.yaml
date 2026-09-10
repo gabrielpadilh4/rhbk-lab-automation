@@ -6,4 +6,4 @@ postgresql:
     - python3-psycopg2
   systemd_service: postgresql
   firewall_port: 5432
-  init_command: "postgresql-setup --initdb"
+  init_command: "/usr/bin/postgresql-setup --initdb"

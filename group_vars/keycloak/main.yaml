@@ -17,6 +17,3 @@ rhbk_db_pass: "{{ db_password }}"
 rhbk_db_url: "jdbc:postgresql://keycloak-postgresql-db.lab.local:5432/keycloak"
 
 rhbk_bootstrap_admin_password: "{{ admin_password }}"
-
-packages:
-  - krb5-workstation

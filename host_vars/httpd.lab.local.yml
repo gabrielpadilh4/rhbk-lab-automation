@@ -1,0 +1,27 @@
+---
+network_provider: nm
+network_state:
+  interfaces:
+    - name: enp1s0
+      type: ethernet
+      state: up
+      ipv4:
+        enabled: true
+        address:
+          - ip: 192.168.122.10
+            prefix-length: 24
+        dhcp: false
+  routes:
+    config:
+      - destination: 0.0.0.0/0
+        next-hop-interface: enp1s0
+        state: absent
+      - destination: 0.0.0.0/0
+        next-hop-address: 192.168.122.1
+        next-hop-interface: enp1s0
+  dns-resolver:
+    config:
+      search:
+        - lab.local
+      server:
+        - 192.168.122.2
