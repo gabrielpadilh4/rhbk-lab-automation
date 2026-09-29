@@ -11,6 +11,7 @@
         - 8080/tcp
         - 9000/tcp
         - 7800/tcp
+        - 57800/tcp
   roles:
     - redhat.rhbk.rhbk
   tasks:
