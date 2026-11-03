@@ -7,3 +7,8 @@ postgresql:
   systemd_service: postgresql
   firewall_port: 5432
   init_command: "/usr/bin/postgresql-setup --initdb"
+
+
+db_name: keycloak
+db_user: keycloak
+db_password: keycloak

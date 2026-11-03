@@ -6,7 +6,7 @@ keycloak01.lab.local ansible_host=192.168.122.11
 keycloak02.lab.local ansible_host=192.168.122.12
 
 [database]
-keycloak-postgresql-db.lab.local ansible_host=192.168.122.13
+postgresql.lab.local ansible_host=192.168.122.13
 
 [rhel10:children]
 load_balancer

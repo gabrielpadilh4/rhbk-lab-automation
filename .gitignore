@@ -1,6 +1,8 @@
 ansible-navigator.log
 collections/ansible_collections
+files/
 rhbk-26.6.5.zip
+rhbk-26.6.7.zip
 keycloak-vault-pass
 devops_become_password
 .temp-inventory

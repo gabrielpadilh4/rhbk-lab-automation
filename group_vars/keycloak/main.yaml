@@ -1,4 +1,4 @@
-rhbk_version: 26.6.5
+rhbk_version: 26.6.7
 rhbk_offline_install: true
 rhbk_download_path: "/workspaces/rhbk-lab-automation"
 rhbk_dest: /opt/rhbk
@@ -12,8 +12,8 @@ rhbk_log: file,console
 
 rhbk_ha_enabled: true
 rhbk_health_check_url: http://localhost:9000/health
-rhbk_db_user: "{{ db_user }}"
-rhbk_db_pass: "{{ db_password }}"
-rhbk_db_url: "jdbc:postgresql://keycloak-postgresql-db.lab.local:5432/keycloak"
+rhbk_db_user: "keycloak"
+rhbk_db_pass: "keycloak"
+rhbk_db_url: "jdbc:postgresql://postgresql.lab.local:5432/keycloak"
 
-rhbk_bootstrap_admin_password: "{{ admin_password }}"
+rhbk_bootstrap_admin_password: "keycloakeasypassword"

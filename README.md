@@ -19,7 +19,7 @@ The lab consists of 4 dedicated RHEL servers configured in a highly available, l
 | `httpd.lab.local` | `192.168.122.10` | RHEL 10 | Reverse Proxy / Load Balancer (Apache HTTPD) | 443 |
 | `keycloak01.lab.local` | `192.168.122.11` | RHEL 10 | RHBK Active Node 1 | 8080, 7800, 9000 |
 | `keycloak02.lab.local` | `192.168.122.12` | RHEL 10 | RHBK Active Node 2 | 8080, 7800, 9000 |
-| `keycloak-postgresql-db.lab.local` | `192.168.122.13` | RHEL 10 | Database Backend (PostgreSQL) | 5432 |
+| `postgresql.lab.local` | `192.168.122.13` | RHEL 10 | Database Backend (PostgreSQL) | 5432 |
 
 ## Prerequisites
 
@@ -35,7 +35,7 @@ Ensure the following tooling is installed on your control node prior to executio
 
 The playbook uses the following collections (automatically pulled from requirements.yaml):
 
-- `redhat.rhel_system_roles` (v1.120.5) - RHEL system configuration
+- `redhat.rhel_system_roles` (v2.4.2) - RHEL system configuration
 - `redhat.rhbk` (v3.0.2) - Red Hat Build of Keycloak deployment
 - `community.postgresql` - PostgreSQL database management
 
@@ -88,7 +88,7 @@ podman pull registry.redhat.io/ansible-automation-platform-25/ansible-dev-tools-
 | `httpd.lab.local` | `192.168.122.10` | RHEL 10 | Reverse Proxy / Load Balancer (Apache HTTPD) | 443 |
 | `keycloak01.lab.local` | `192.168.122.11` | RHEL 10 | RHBK Active Node 1 | 8080, 7800, 9000 |
 | `keycloak02.lab.local` | `192.168.122.12` | RHEL 10 | RHBK Active Node 2 | 8080, 7800, 9000 |
-| `keycloak-postgresql-db.lab.local` | `192.168.122.13` | RHEL 10 | Database Backend (PostgreSQL) | 5432 |
+| `postgresql.lab.local` | `192.168.122.13` | RHEL 10 | Database Backend (PostgreSQL) | 5432 |
 
 
 ### 7. SSH Configuration
@@ -110,12 +110,11 @@ Before execution, verify all the following are complete:
 
 - [ ] `inventory` file updated with correct hostnames and IP addresses
 - [ ] `devops_become_password` file created and set with appropriate permissions
-- [ ] `keycloak-vault-pass` file created
 - [ ] `group_vars/keycloak/main.yaml`, `group_vars/database/main.yaml`, and `group_vars/load_balancer/main.yaml` customized for your environment
-- [ ] Certificates `keycloak.lab.local.crt` and `keycloak.lab.local.key` in files match the host
-```
-openssl req -x509 -newkey rsa:4096 -sha256 -days 365 -noenc -keyout keycloak.lab.local.key -out keycloak.lab.local.crt -subj "/C=US/ST=State/L=City/O=Organization/OU=Department/CN=keycloak.lab.local" -addext "subjectAltName=DNS:keycloak.lab.local,IP:192.168.122.10"
-```
+- [ ] Certificates `keycloak.lab.local.crt` and `keycloak.lab.local.key` undr `files/` directory that match the host. Below is a example for generating a self-signed certificate:
+   ```
+   openssl req -x509 -newkey rsa:4096 -sha256 -days 365 -noenc -keyout keycloak.lab.local.key -out keycloak.lab.local.crt -subj "/C=US/ST=State/L=City/O=Organization/OU=Department/CN=keycloak.lab.local" -addext "subjectAltName=DNS:keycloak.lab.local,IP:192.168.122.10"
+   ```
 - [ ] SSH connectivity verified with `ansible all -i inventory -m ping`
 
 ### Execution

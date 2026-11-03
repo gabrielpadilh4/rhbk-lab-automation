@@ -38,7 +38,7 @@
       block:
         - name: Create postgresql user for Keycloak
           community.postgresql.postgresql_user:
-            db: "{{ db_name }}"
+            login_db: "{{ db_name }}"
             name: "{{ db_user }}"
             password: "{{ db_password }}"
             state: present
@@ -48,7 +48,7 @@
 
         - name: Grant all privileges to Keycloak user
           community.postgresql.postgresql_privs:
-            db: "{{ db_name }}"
+            login_db: "{{ db_name }}"
             objs: public
             privs: ALL
             type: schema
