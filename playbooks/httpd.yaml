@@ -1,4 +1,8 @@
 ---
+- name: Gather facts from Keycloak servers
+  hosts: keycloak
+  gather_facts: true
+
 - name: Install and Configure HTTPD
   hosts: load_balancer
   tasks:
@@ -47,20 +51,14 @@
 
     - name: Copy ssl certificates
       ansible.builtin.copy:
-        src: "/workspaces/rhbk-lab-automation/files/{{ item }}"
+        src: "../files/{{ item }}"
         dest: "{{ certificates_dir }}/{{ item }}"
         mode: "0644"
       loop: "{{ certificates_files }}"
 
-    - name: Gather facts from Keycloak servers
-      ansible.builtin.setup:
-      delegate_to: "{{ item }}"
-      delegate_facts: true
-      loop: "{{ groups['keycloak'] }}"
-
     - name: Copy http-keycloak configuration
       ansible.builtin.template:
-        src: /workspaces/rhbk-lab-automation/templates/httpd-keycloak.conf.j2
+        src: "../templates/httpd-keycloak.conf.j2"
         dest: "{{ httpd_conf_file }}"
         mode: '0644'
       notify: Restart httpd

@@ -1,3 +1,4 @@
+---
 - name: Import pre-setup playbook
   ansible.builtin.import_playbook: playbooks/pre-setup.yaml
 

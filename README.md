@@ -2,12 +2,31 @@
 
 [![Ansible](https://img.shields.io/badge/Ansible-Supported-red?logo=ansible)](https://docs.ansible.com/)
 [![RHEL](https://img.shields.io/badge/OS-RHEL%2010-red?logo=redhat)](https://www.redhat.com/en/technologies/linux-platforms/enterprise-linux)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](./LICENSE)
 
 Automated Ansible playbooks for deploying a High-Availability (HA) **Red Hat Build of Keycloak (RHBK)** environment on Red Hat Enterprise Linux.
 
+> ⚠️ **Lab environment — not production-hardened.** This project is intended for
+> learning and testing. It uses self-signed certificates, `NOPASSWD` sudo for the
+> `devops` user, broadly opened firewall ports, and default/plaintext passwords in
+> `group_vars/`. Review and harden all of these (e.g. Ansible Vault, proper PKI,
+> least-privilege sudo) before using anything resembling this in production.
+
 ## Architecture Overview
 
-The lab consists of 4 dedicated RHEL servers configured in a highly available, load-balanced layout:
+The lab consists of 4 dedicated RHEL servers configured in a load-balanced layout:
+
+- **Apache HTTPD** (`httpd.lab.local`) terminates TLS on port `443` and reverse-proxies
+  traffic to the Keycloak nodes using `mod_proxy_balancer` (round-robin across the
+  cluster members on port `8080`).
+- **Two clustered RHBK nodes** (`keycloak01`/`keycloak02`) run active/active. They form
+  an Infinispan/JGroups cluster over ports `7800` and `57800` for distributed caching
+  and session replication, and expose the management/health endpoint on port `9000`.
+- **A shared PostgreSQL backend** (`postgresql.lab.local`, port `5432`) stores all realm,
+  user, and session persistence data for both Keycloak nodes.
+
+> **Note on availability:** only the Keycloak tier is redundant. The HTTPD load balancer
+> and the PostgreSQL database are each single points of failure in this topology.
 
 ![network diagram](./docs/diagram.excalidraw.png)
 
@@ -25,7 +44,7 @@ The lab consists of 4 dedicated RHEL servers configured in a highly available, l
 
 Ensure the following tooling is installed on your control node prior to execution:
 
-- **[Ansible](https://docs.ansible.com/ansible/latest/installation_guide/index.html)** (2.15+)
+- **[Ansible](https://docs.ansible.com/ansible/latest/installation_guide/index.html)** — `ansible-core` 2.16+ (Ansible community package 9+), required by the `redhat.rhbk` and `redhat.rhel_system_roles` collections
 - **[Ansible Navigator](https://ansible.readthedocs.io/projects/navigator/installation)** (1.1.0+)
 - **[Podman](https://podman.io/)** (4.0+) - for running execution environments
 - **Python 3.11+** on the control node
@@ -37,7 +56,7 @@ The playbook uses the following collections (automatically pulled from requireme
 
 - `redhat.rhel_system_roles` (v2.4.2) - RHEL system configuration
 - `redhat.rhbk` (v3.0.2) - Red Hat Build of Keycloak deployment
-- `community.postgresql` - PostgreSQL database management
+- `community.postgresql` (v5.1.0) - PostgreSQL database management
 
 Install collections by running:
 
@@ -80,18 +99,15 @@ For offline execution, you may need to pre-pull the image:
 podman pull registry.redhat.io/ansible-automation-platform-25/ansible-dev-tools-rhel8:latest
 ```
 
-### 6. Network
+### 4. Network
 
-| Hostname | IP Address | OS | Role | Primary Ports |
-| :--- | :--- | :--- | :--- | :--- |
-| `control-node` | `192.168.122.1` | | Run the ansible automation code | |
-| `httpd.lab.local` | `192.168.122.10` | RHEL 10 | Reverse Proxy / Load Balancer (Apache HTTPD) | 443 |
-| `keycloak01.lab.local` | `192.168.122.11` | RHEL 10 | RHBK Active Node 1 | 8080, 7800, 9000 |
-| `keycloak02.lab.local` | `192.168.122.12` | RHEL 10 | RHBK Active Node 2 | 8080, 7800, 9000 |
-| `postgresql.lab.local` | `192.168.122.13` | RHEL 10 | Database Backend (PostgreSQL) | 5432 |
+Per-host IP addresses are defined once in the `inventory` file (`ansible_host`) and
+reused by the shared network configuration in `group_vars/all/main.yaml`. See the
+[Topology & Network Specifications](#topology--network-specifications) table above
+for the full layout. Adjust the gateway, DNS, and search domain in
+`group_vars/all/main.yaml` if your environment differs.
 
-
-### 7. SSH Configuration
+### 5. SSH Configuration
 
 Ensure SSH access to all hosts with the `devops` user:
 
@@ -111,9 +127,9 @@ Before execution, verify all the following are complete:
 - [ ] `inventory` file updated with correct hostnames and IP addresses
 - [ ] `devops_become_password` file created and set with appropriate permissions
 - [ ] `group_vars/keycloak/main.yaml`, `group_vars/database/main.yaml`, and `group_vars/load_balancer/main.yaml` customized for your environment
-- [ ] Certificates `keycloak.lab.local.crt` and `keycloak.lab.local.key` undr `files/` directory that match the host. Below is a example for generating a self-signed certificate:
+- [ ] Certificates `keycloak.lab.local.crt` and `keycloak.lab.local.key` under the `files/` directory that match the host. The subject and SANs below match the provided `files/ssl.conf`; adjust them for your environment. Example for generating a self-signed certificate:
    ```
-   openssl req -x509 -newkey rsa:4096 -sha256 -days 365 -noenc -keyout keycloak.lab.local.key -out keycloak.lab.local.crt -subj "/C=US/ST=State/L=City/O=Organization/OU=Department/CN=keycloak.lab.local" -addext "subjectAltName=DNS:keycloak.lab.local,IP:192.168.122.10"
+   openssl req -x509 -newkey rsa:4096 -sha256 -days 365 -noenc -keyout keycloak.lab.local.key -out keycloak.lab.local.crt -subj "/C=BR/ST=SP/L=Santo Antonio de Posse/O=Starscream/OU=IT/CN=keycloak.lab.local" -addext "subjectAltName=IP:192.168.122.10,DNS:keycloak.lab.local,DNS:keycloak,DNS:www.keycloak.lab.local"
    ```
 - [ ] SSH connectivity verified with `ansible all -i inventory -m ping`
 
@@ -155,3 +171,17 @@ ansible keycloak -i inventory -m systemd -a "name=rhbk state=started"
 ansible database -i inventory -m systemd -a "name=postgresql state=started"
 ansible load_balancer -i inventory -m systemd -a "name=httpd state=started"
 ```
+
+## Author
+
+Maintained by [@gabrielpadilh4](https://github.com/gabrielpadilh4).
+
+## Repository
+
+Source code: <https://github.com/gabrielpadilh4/rhbk-lab-automation>
+
+Issues and contributions are welcome via GitHub issues and pull requests.
+
+## License
+
+Released under the [MIT License](./LICENSE).

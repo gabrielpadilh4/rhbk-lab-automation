@@ -1,6 +1,6 @@
 rhbk_version: 26.6.7
 rhbk_offline_install: true
-rhbk_download_path: "/workspaces/rhbk-lab-automation"
+rhbk_download_path: "{{ inventory_dir }}"
 rhbk_dest: /opt/rhbk
 rhbk_systemd_wait_for_port_number: 8080
 

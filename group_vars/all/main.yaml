@@ -1,0 +1,35 @@
+---
+# Shared network configuration for all managed hosts.
+# The per-host IP is taken from `ansible_host` in the inventory, so each host
+# only needs its address defined once (in the inventory file).
+network_provider: nm
+
+network_gateway: 192.168.122.1
+network_dns: 192.168.122.2
+network_search_domain: lab.local
+
+network_state:
+  interfaces:
+    - name: enp1s0
+      type: ethernet
+      state: up
+      ipv4:
+        enabled: true
+        address:
+          - ip: "{{ ansible_host }}"
+            prefix-length: 24
+        dhcp: false
+  routes:
+    config:
+      - destination: 0.0.0.0/0
+        next-hop-interface: enp1s0
+        state: absent
+      - destination: 0.0.0.0/0
+        next-hop-address: "{{ network_gateway }}"
+        next-hop-interface: enp1s0
+  dns-resolver:
+    config:
+      search:
+        - "{{ network_search_domain }}"
+      server:
+        - "{{ network_dns }}"

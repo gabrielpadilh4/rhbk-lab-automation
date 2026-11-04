@@ -1,3 +1,4 @@
+---
 - name: Install and Configure Red Hat build of Keycloak
   hosts: keycloak
   pre_tasks:
