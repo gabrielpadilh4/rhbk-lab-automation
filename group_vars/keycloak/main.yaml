@@ -8,7 +8,12 @@ rhbk_proxy_headers: xforwarded
 rhbk_hostname: "https://keycloak.lab.local"
 rhbk_hostname_strict: false
 
-rhbk_log: file,console
+rhbk_log: console,file
+rhbk_log_level: info,org.keycloak.federation:TRACE
+
+rhbk_additional_env_vars:
+  - key: JAVA_OPTS_APPEND
+    value: "-Dsun.security.krb5.debug=true -Dsun.security.spnego.debug=true"
 
 rhbk_ha_enabled: true
 rhbk_health_check_url: http://localhost:9000/health

@@ -56,9 +56,9 @@
         mode: "0644"
       loop: "{{ certificates_files }}"
 
-    - name: Copy http-keycloak configuration
+    - name: Copy httpd keycloak configuration
       ansible.builtin.template:
-        src: "../templates/httpd-keycloak.conf.j2"
+        src: "../templates/httpd/keycloak.conf.j2"
         dest: "{{ httpd_conf_file }}"
         mode: '0644'
       notify: Restart httpd

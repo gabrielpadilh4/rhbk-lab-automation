@@ -14,4 +14,4 @@ certificates_files:
   - keycloak.lab.local.crt
   - keycloak.lab.local.key
 
-httpd_conf_file: /etc/httpd/conf.d/http-keycloak.conf
+httpd_conf_file: /etc/httpd/conf.d/keycloak.conf
