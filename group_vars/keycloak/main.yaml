@@ -1,4 +1,4 @@
-rhbk_version: 26.6.7
+rhbk_version: 26.6.9
 rhbk_offline_install: true
 rhbk_download_path: "{{ inventory_dir }}"
 rhbk_dest: /opt/rhbk
