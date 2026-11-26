@@ -1,0 +1,11 @@
+---
+# Keycloak secrets template.
+#
+# Setup:
+#   cp group_vars/keycloak/vault.yaml.example group_vars/keycloak/vault.yaml
+#   # edit in real passwords, then:
+#   ansible-vault encrypt group_vars/keycloak/vault.yaml
+#
+# vault_rhbk_bootstrap_admin_password is consumed by:
+#   - group_vars/keycloak/main.yaml  (rhbk_bootstrap_admin_password)
+vault_rhbk_bootstrap_admin_password: keycloakeasypassword

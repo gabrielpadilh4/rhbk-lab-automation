@@ -18,7 +18,9 @@ rhbk_additional_env_vars:
 rhbk_ha_enabled: true
 rhbk_health_check_url: http://localhost:9000/health
 rhbk_db_user: "keycloak"
-rhbk_db_pass: "keycloak"
+# Secret sourced from group_vars/all/vault.yaml (Ansible Vault encrypted).
+rhbk_db_pass: "{{ vault_db_password }}"
 rhbk_db_url: "jdbc:postgresql://postgresql.lab.local:5432/keycloak"
 
-rhbk_bootstrap_admin_password: "keycloakeasypassword"
+# Secret sourced from group_vars/keycloak/vault.yaml (Ansible Vault encrypted).
+rhbk_bootstrap_admin_password: "{{ vault_rhbk_bootstrap_admin_password }}"

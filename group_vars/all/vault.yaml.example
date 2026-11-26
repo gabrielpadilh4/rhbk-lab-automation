@@ -1,0 +1,12 @@
+---
+# Shared secrets template.
+#
+# Setup:
+#   cp group_vars/all/vault.yaml.example group_vars/all/vault.yaml
+#   # edit in real passwords, then:
+#   ansible-vault encrypt group_vars/all/vault.yaml
+#
+# vault_db_password is consumed by:
+#   - group_vars/database/main.yaml  (db_password)   -> creates the PostgreSQL user
+#   - group_vars/keycloak/main.yaml  (rhbk_db_pass)  -> Keycloak JDBC connection
+vault_db_password: keycloak

@@ -11,4 +11,5 @@ postgresql:
 
 db_name: keycloak
 db_user: keycloak
-db_password: keycloak
+# Secret sourced from group_vars/all/vault.yaml (Ansible Vault encrypted).
+db_password: "{{ vault_db_password }}"
