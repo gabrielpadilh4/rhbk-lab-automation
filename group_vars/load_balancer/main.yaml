@@ -9,9 +9,13 @@ firewall_services:
   - http
   - https
 
+# Public hostname clients use to reach Keycloak (the load balancer VirtualHost
+# and the TLS certificate are both derived from this).
+keycloak_public_hostname: keycloak.corp.example.com
+
 certificates_dir: /opt/certificates
 certificates_files:
-  - keycloak.corp.example.com.crt
-  - keycloak.corp.example.com.key
+  - "{{ keycloak_public_hostname }}.crt"
+  - "{{ keycloak_public_hostname }}.key"
 
 httpd_conf_file: /etc/httpd/conf.d/keycloak.conf

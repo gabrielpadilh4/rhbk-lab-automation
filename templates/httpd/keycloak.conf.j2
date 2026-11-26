@@ -12,11 +12,11 @@ Listen 443
 
 
 <VirtualHost *:443>
-    ServerName keycloak.corp.example.com
+    ServerName {{ keycloak_public_hostname }}
 
     SSLEngine on
-    SSLCertificateFile /opt/certificates/keycloak.corp.example.com.crt
-    SSLCertificateKeyFile /opt/certificates/keycloak.corp.example.com.key
+    SSLCertificateFile {{ certificates_dir }}/{{ keycloak_public_hostname }}.crt
+    SSLCertificateKeyFile {{ certificates_dir }}/{{ keycloak_public_hostname }}.key
 
     ProxyPreserveHost on
     ProxyAddHeaders on
@@ -32,6 +32,6 @@ Listen 443
 </VirtualHost>
 
 <VirtualHost *:80>
-    ServerName keycloak.corp.example.com
-    Redirect permanent / https://keycloak.corp.example.com/
+    ServerName {{ keycloak_public_hostname }}
+    Redirect permanent / https://{{ keycloak_public_hostname }}/
 </VirtualHost>

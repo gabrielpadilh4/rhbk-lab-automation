@@ -82,14 +82,14 @@ names, and their IPs. Edit it first:
 
 ```ini
 [load_balancer]
-httpd.lab.local ansible_host=192.168.122.10
+httpd.corp.example.com ansible_host=192.168.122.10
 
 [keycloak]
-keycloak01.lab.local ansible_host=192.168.122.11
-keycloak02.lab.local ansible_host=192.168.122.12
+keycloak01.corp.example.com ansible_host=192.168.122.11
+keycloak02.corp.example.com ansible_host=192.168.122.12
 
 [database]
-postgresql.lab.local ansible_host=192.168.122.13
+postgresql.corp.example.com ansible_host=192.168.122.13
 
 [rhel10:children]
 load_balancer
@@ -112,7 +112,7 @@ database
 #### Where IP addresses & hostnames live
 
 If you move beyond simply renumbering hosts in the inventory, these are the **only**
-other places that hardcode an IP, subnet, or `*.lab.local` name:
+other places that hardcode an IP, subnet, or `*.corp.example.com` name:
 
 | What to change | File | Setting(s) |
 | :--- | :--- | :--- |
@@ -120,15 +120,15 @@ other places that hardcode an IP, subnet, or `*.lab.local` name:
 | Gateway, DNS, search domain | `group_vars/all/main.yaml` | `network_gateway`, `network_dns`, `network_search_domain` |
 | NIC name & subnet size | `group_vars/all/main.yaml` | `interfaces[].name` (`enp1s0`), `prefix-length` (`24`) |
 | Subnet allowed to reach PostgreSQL | `playbooks/postgresql.yaml` | `source: 192.168.122.0/24` (pg_hba rule) |
-| Keycloak public URL | `group_vars/keycloak/main.yaml` | `rhbk_hostname` (`https://keycloak.lab.local`) |
+| Keycloak public URL | `group_vars/keycloak/main.yaml` | `rhbk_hostname` (`https://keycloak.corp.example.com`) |
 | Keycloak → database JDBC URL | `group_vars/keycloak/main.yaml` | `rhbk_db_url` (DB hostname/port) |
-| Apache `ServerName` & HTTP→HTTPS redirect | `templates/httpd/keycloak.conf.j2` | `ServerName`, `Redirect` target |
+| Load balancer public hostname (Apache `ServerName`, redirect, TLS cert filenames) | `group_vars/load_balancer/main.yaml` | `keycloak_public_hostname` — the httpd template and `certificates_files` both derive from it |
 | TLS certificate subject & SANs | `files/ssl.conf` | `CN`, `IP.1`, `DNS.1`–`DNS.3` |
-| TLS certificate filenames | `group_vars/load_balancer/main.yaml` + `templates/httpd/keycloak.conf.j2` | `certificates_files`, `SSLCertificate*File` |
 
-> **Tip:** the lab uses the public hostname `keycloak.lab.local` for the load balancer.
-> If you change it, update `rhbk_hostname`, the Apache `ServerName`/redirect, and the
-> certificate (`files/ssl.conf` plus the `.crt`/`.key` filenames) together so they match.
+> **Tip:** the lab uses the public hostname `keycloak.corp.example.com` for the load balancer.
+> It is defined once as `keycloak_public_hostname` (drives the Apache VirtualHost and the
+> expected `.crt`/`.key` filenames). If you change it, also update `rhbk_hostname` and the
+> certificate subject/SANs in `files/ssl.conf` so they match.
 
 **Note:** Ensure all hosts are reachable via SSH and have passwordless sudo configured or valid sudo credentials.
 
@@ -226,9 +226,9 @@ Before execution, verify all the following are complete:
 - [ ] `devops_become_password` file created and set with appropriate permissions
 - [ ] Vault files created from the `*.example` templates, filled in, and encrypted; `.vault_pass` created (see [Secrets (Ansible Vault)](#2-secrets-ansible-vault))
 - [ ] `group_vars/keycloak/main.yaml`, `group_vars/database/main.yaml`, and `group_vars/load_balancer/main.yaml` customized for your environment
-- [ ] Certificates `keycloak.lab.local.crt` and `keycloak.lab.local.key` under the `files/` directory that match the host. The subject and SANs below match the provided `files/ssl.conf`; adjust them for your environment. Example for generating a self-signed certificate:
+- [ ] Certificates `keycloak.corp.example.com.crt` and `keycloak.corp.example.com.key` under the `files/` directory (filenames must match `keycloak_public_hostname`). The subject and SANs below match the provided `files/ssl.conf`; adjust them for your environment. Example for generating a self-signed certificate:
    ```
-   openssl req -x509 -newkey rsa:4096 -sha256 -days 365 -noenc -keyout keycloak.lab.local.key -out keycloak.lab.local.crt -subj "/C=BR/ST=SP/L=Santo Antonio de Posse/O=Starscream/OU=IT/CN=keycloak.lab.local" -addext "subjectAltName=IP:192.168.122.10,DNS:keycloak.lab.local,DNS:keycloak,DNS:www.keycloak.lab.local"
+   openssl req -x509 -newkey rsa:4096 -sha256 -days 365 -noenc -keyout keycloak.corp.example.com.key -out keycloak.corp.example.com.crt -subj "/C=BR/ST=SP/L=Santo Antonio de Posse/O=Starscream/OU=IT/CN=keycloak.corp.example.com" -addext "subjectAltName=IP:192.168.122.10,DNS:keycloak.corp.example.com,DNS:keycloak,DNS:www.keycloak.corp.example.com"
    ```
 - [ ] SSH connectivity verified with `ansible all -i inventory -m ping`
 
