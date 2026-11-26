@@ -11,7 +11,7 @@ firewall_services:
 
 certificates_dir: /opt/certificates
 certificates_files:
-  - keycloak.lab.local.crt
-  - keycloak.lab.local.key
+  - keycloak.corp.example.com.crt
+  - keycloak.corp.example.com.key
 
 httpd_conf_file: /etc/httpd/conf.d/keycloak.conf

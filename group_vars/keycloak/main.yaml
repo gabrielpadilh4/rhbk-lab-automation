@@ -5,7 +5,7 @@ rhbk_dest: /opt/rhbk
 rhbk_systemd_wait_for_port_number: 8080
 
 rhbk_proxy_headers: xforwarded
-rhbk_hostname: "https://keycloak.lab.local"
+rhbk_hostname: "https://keycloak.corp.example.com"
 rhbk_hostname_strict: false
 
 rhbk_log: console,file
@@ -20,7 +20,7 @@ rhbk_health_check_url: http://localhost:9000/health
 rhbk_db_user: "keycloak"
 # Secret sourced from group_vars/all/vault.yaml (Ansible Vault encrypted).
 rhbk_db_pass: "{{ vault_db_password }}"
-rhbk_db_url: "jdbc:postgresql://postgresql.lab.local:5432/keycloak"
+rhbk_db_url: "jdbc:postgresql://postgresql.corp.example.com:5432/keycloak"
 
 # Secret sourced from group_vars/keycloak/vault.yaml (Ansible Vault encrypted).
 rhbk_bootstrap_admin_password: "{{ vault_rhbk_bootstrap_admin_password }}"

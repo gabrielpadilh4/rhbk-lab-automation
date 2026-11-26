@@ -1,8 +1,19 @@
-ansible-navigator.log
-collections/ansible_collections
-files/
-rhbk-*.zip
+# Secrets (never commit)
 .vault_pass
 group_vars/*/vault.yaml
 devops_become_password
+
+# Local TLS material
+files/
+
+# Ansible / navigator artifacts
+ansible-navigator.log
+collections/ansible_collections
 .temp-inventory
+
+# RHBK offline installer archive
+rhbk-*.zip
+
+# Python (docs/diagram.py generator)
+__pycache__/
+*.py[cod]

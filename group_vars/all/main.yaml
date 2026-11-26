@@ -6,7 +6,7 @@ network_provider: nm
 
 network_gateway: 192.168.122.1
 network_dns: 192.168.122.2
-network_search_domain: lab.local
+network_search_domain: corp.example.com
 
 network_state:
   interfaces:

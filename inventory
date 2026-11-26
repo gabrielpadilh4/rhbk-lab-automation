@@ -1,12 +1,12 @@
 [load_balancer]
-httpd.lab.local ansible_host=192.168.122.10
+httpd.corp.example.com ansible_host=192.168.122.10
 
 [keycloak]
-keycloak01.lab.local ansible_host=192.168.122.11
-keycloak02.lab.local ansible_host=192.168.122.12
+keycloak01.corp.example.com ansible_host=192.168.122.11
+keycloak02.corp.example.com ansible_host=192.168.122.12
 
 [database]
-postgresql.lab.local ansible_host=192.168.122.13
+postgresql.corp.example.com ansible_host=192.168.122.13
 
 [rhel10:children]
 load_balancer

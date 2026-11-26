@@ -12,11 +12,11 @@ Listen 443
 
 
 <VirtualHost *:443>
-    ServerName keycloak.lab.local
+    ServerName keycloak.corp.example.com
 
     SSLEngine on
-    SSLCertificateFile /opt/certificates/keycloak.lab.local.crt
-    SSLCertificateKeyFile /opt/certificates/keycloak.lab.local.key
+    SSLCertificateFile /opt/certificates/keycloak.corp.example.com.crt
+    SSLCertificateKeyFile /opt/certificates/keycloak.corp.example.com.key
 
     ProxyPreserveHost on
     ProxyAddHeaders on
@@ -32,6 +32,6 @@ Listen 443
 </VirtualHost>
 
 <VirtualHost *:80>
-    ServerName keycloak.lab.local
-    Redirect permanent / https://keycloak.lab.local/
+    ServerName keycloak.corp.example.com
+    Redirect permanent / https://keycloak.corp.example.com/
 </VirtualHost>
